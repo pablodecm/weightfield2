@@ -2022,7 +2022,6 @@ void WFGUI::DrawAllGraph(int LCol = 1)
       NLine2->DrawLine(wherecut2,0,wherecut2,dwpot.GetYMAX()-2);
       canvasw->Update(); 
     }
-
   if (GetLessPlot() or LCol == 0) return;
   
   canvaswc->Clear();
@@ -2036,7 +2035,6 @@ void WFGUI::DrawAllGraph(int LCol = 1)
   DrawCutGraph(LCol);
   DrawFieldsAbs(LCol);
   
-  //  cout << "===== Finished DrawAllGraph ======" << endl;
   return;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -2380,7 +2378,7 @@ Int_t WFGUI::ThreadstopPotential(){
 	  //Nicolo
 	  // stopped=true;
 		TThread::Delete(PotentialThread);
-		delete PotentialThread;
+		//delete PotentialThread;
 		PotentialThread=0;
 		return 0;
 	}      
@@ -2413,7 +2411,7 @@ Int_t WFGUI::ThreadstopCurrents(){
 	if(CurrentsThread){
 		//stopped=true;
 		TThread::Delete(CurrentsThread);
-		delete CurrentsThread;
+		//delete CurrentsThread;
 		CurrentsThread=0;
 		return 0;
 	}      
@@ -2422,7 +2420,7 @@ Int_t WFGUI::ThreadstopCurrents(){
 /////////////////////////////////////////////////////////////////////////////////////////////
 void WFGUI::KillPotentialThread() {
 		TThread::Delete(PotentialThread);
-		delete PotentialThread;
+		//delete PotentialThread;
 		PotentialThread=0;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
