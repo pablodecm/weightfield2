@@ -1,4 +1,5 @@
 #include "WFGUI.h"
+
 WFGUI::WFGUI(const TGWindow *p,UInt_t w,UInt_t h): TGMainFrame(p,w,h), dwpot(Potentials(300,1,200,30)) {
 // this pointer points to mainframe
 	radiobuttonstatus=MIPunif;			//radio button mip set as default
@@ -185,10 +186,10 @@ WFGUI::WFGUI(const TGWindow *p,UInt_t w,UInt_t h): TGMainFrame(p,w,h), dwpot(Pot
 	CurrentsProgressBar->ShowPosition(kTRUE,kTRUE);	
 	CurrentsProgressBar->Percent(0);
 
-	CurrentsInfoFrame->AddFrame(CurrentsLabelFrame, new TGLayoutHints(kLHintsExpandX | kLHintsTop,1,1,1,1));			//
-	CurrentsInfoFrame->AddFrame(CarriersInFrame, new TGLayoutHints(kLHintsExpandX,1,1,1,1));							//
-	CurrentsInfoFrame->AddFrame(CarriersInFrame, new TGLayoutHints(kLHintsExpandX,1,1,1,1));							//
-	CurrentsInfoFrame->AddFrame(ChargeCollectionFrame,new TGLayoutHints(kLHintsExpandX,1,1,1,1));						//
+	CurrentsInfoFrame->AddFrame(CurrentsLabelFrame, new TGLayoutHints(kLHintsExpandX | kLHintsTop,1,1,1,1));
+	CurrentsInfoFrame->AddFrame(CarriersInFrame, new TGLayoutHints(kLHintsExpandX,1,1,1,1));
+	CurrentsInfoFrame->AddFrame(CarriersInFrame, new TGLayoutHints(kLHintsExpandX,1,1,1,1));
+	CurrentsInfoFrame->AddFrame(ChargeCollectionFrame,new TGLayoutHints(kLHintsExpandX,1,1,1,1));
 	CurrentsInfoFrame->AddFrame(LorentzInfoFrame,new TGLayoutHints(kLHintsExpandX,1,1,1,1));							//
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 	// Tab "Oscilloscope" 
@@ -1052,7 +1053,7 @@ void WFGUI::CallCalculatePotentials() {
 
 	double Scaledpot =0;
 	SetGainon(false);
-	if (Gainentry->GetNumber() > 1.)
+	if (Gainentry->GetNumber() > 1. && CallGetDetType() ==0 )
 	  {
 	    
 	    SetGainon(true);
@@ -1990,8 +1991,6 @@ void WFGUI::DrawAllGraph(int LCol = 1)
       canvasw->Update();     
       
 
-
-
       NLine1 = new TLine();
       NLine2 = new TLine();
       NLine1->SetLineStyle(2);
@@ -2021,7 +2020,13 @@ void WFGUI::DrawAllGraph(int LCol = 1)
       // cout << "Line2" << endl;
       NLine2->DrawLine(wherecut2,0,wherecut2,dwpot.GetYMAX()-2);
       canvasw->Update(); 
+      delete NLine1;
+      delete NLine2;
+   
     }
+
+
+
   if (GetLessPlot() or LCol == 0) return;
   
   canvaswc->Clear();
@@ -2035,7 +2040,9 @@ void WFGUI::DrawAllGraph(int LCol = 1)
   DrawCutGraph(LCol);
   DrawFieldsAbs(LCol);
   
+  cout << "===== Finished DrawAllGraph ======" << endl;
   return;
+
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
 void WFGUI::DrawCutGraph(int LCol)
@@ -2056,6 +2063,8 @@ void WFGUI::DrawCutGraph(int LCol)
 	    dpoty[k] = dwpot.Getdpot(k,wherecut);
 	    if (dpoty[k]> dMax) dMax = dpoty[k];
 	  }
+	TGraph driftcut2(dwpot.GetYMAX(),q,dpoty);
+	
 	driftcut= new TGraph(dwpot.GetYMAX(),q,dpoty);
 	driftcut->GetXaxis()->SetTitle("y [um]");
    	driftcut->GetXaxis()->SetNdivisions(5);
@@ -2074,6 +2083,26 @@ void WFGUI::DrawCutGraph(int LCol)
 
 	canvaspc->cd(1);
 	driftcut->Draw("AL");
+	/*
+
+	driftcut2.GetXaxis()->SetTitle("y [um]");
+   	driftcut2.GetXaxis()->SetNdivisions(5);
+	driftcut2.SetTitle(" Drift Potential V [V]");
+	driftcut2.GetXaxis()->SetLabelColor(1);
+	driftcut2.GetYaxis()->SetLabelColor(1);
+  	driftcut2.GetYaxis()->SetLabelSize(0.05);
+   	driftcut2.GetYaxis()->SetLabelOffset(.01);
+   	driftcut2.GetXaxis()->SetLabelSize(0.05);
+   	driftcut2.GetXaxis()->SetLabelOffset(.01);
+   	driftcut2.GetXaxis()->SetTitleSize(0.05);
+   	driftcut2.GetYaxis()->SetRangeUser(0.0,dMax*1.3);
+	
+   	driftcut2.SetLineWidth(3);
+	driftcut2.SetLineColor(LCol); // set line color to black
+
+	canvaspc->cd(1);
+	driftcut2.Draw("AL");
+	*/
 	canvaspc->Update();
 
 	//	cout << " Done Drift" << endl;
@@ -2108,7 +2137,11 @@ void WFGUI::DrawCutGraph(int LCol)
 
 	//	cout << " Done Weighting" << endl;
 
-
+	delete q;
+	//	delete dpoty;
+	// delete wpoty;
+	//	delete driftcut;
+	// delete weightcut;
 
 	
 }
@@ -2378,7 +2411,7 @@ Int_t WFGUI::ThreadstopPotential(){
 	  //Nicolo
 	  // stopped=true;
 		TThread::Delete(PotentialThread);
-		//delete PotentialThread;
+		//		delete PotentialThread;
 		PotentialThread=0;
 		return 0;
 	}      
@@ -2411,7 +2444,7 @@ Int_t WFGUI::ThreadstopCurrents(){
 	if(CurrentsThread){
 		//stopped=true;
 		TThread::Delete(CurrentsThread);
-		//delete CurrentsThread;
+		// delete CurrentsThread;
 		CurrentsThread=0;
 		return 0;
 	}      
