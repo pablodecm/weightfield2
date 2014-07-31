@@ -1,5 +1,5 @@
-//#include "Potentials.h"
-#include "WFGUI.h"
+#include "Potentials.h"
+
 //////////////////////////////////////////////////////////////////////
 Potentials::Potentials()  //constructor
 {	
@@ -53,8 +53,9 @@ Potentials::Potentials(int dimy, int dimx)	// constructor
     }
   }
 
-}
 
+
+}
 //////////////////////////////////////////////////////////////////////
 Potentials::Potentials(int dimy, int dimx, double p, double w) // constructor 
 {
@@ -280,7 +281,7 @@ void Potentials::SetBoundaryConditions()   // reset electrodes and potentials ac
     }	
 }  
 //////////////////////////////////////////////////////////////////////
-void Potentials::Iteration(void *wfgui)	// 
+void Potentials::Iteration( )	// 
 {				// method for iterative calculation, see: http://en.wikipedia.org/wiki/Relaxation_%28iterative_method%29
   //int r=1;
   double sum=0;		// [(old potential) - (new potential)]^2/(XMAX*YMAX)
@@ -293,9 +294,7 @@ void Potentials::Iteration(void *wfgui)	//
   for (int i = 0; i < YMAX; ++i) tempfix[i] = new int[XMAX];
   
   tempfix=FixRestriktor();	// determine fix matrix for current grid
-  
-  WFGUI* gui= (WFGUI*) wfgui; 
-  
+    
   if(XMAX==finest) N=1000;		// at the finest grid, do plot updates every 600th interation
   else {
     if(XMAX*2-1==finest) N=700;	// at the first coarser grid, do plot updates every 400th interation
@@ -306,9 +305,6 @@ void Potentials::Iteration(void *wfgui)	//
   
   while(1)		// calculate until accuracy is reached
     {
-      if(gui->Getstopped()==1) {
-	break;
-      }
       
       if(XMAX==finest || XMAX==finest/2+1) err=0.005; // if calculating on finest grid, set accuracy to 0.001
 
@@ -327,16 +323,8 @@ void Potentials::Iteration(void *wfgui)	//
 		  // weighting potential
 		  newpot.wpot[y][x]=0.25*(wpot[y+1][x]+wpot[y-1][x]+wpot[y][(x+1+XMAX)%(XMAX)]+wpot[y][(x-1+XMAX)%(XMAX)]);
 		  // drift potential
-		  if (gui->CallGetDetType() == 0 || gui->CallGetDetType() == 2)
-		    {
 		    newpot.dpot[y][x]=0.25*(dpot[y+1][x]+dpot[y-1][x]+dpot[y][(x+1+XMAX)%(XMAX)]+dpot[y][(x-1+XMAX)%(XMAX)]-poissonf);
 
-		    }
-		  else
-		    {
-		      newpot.dpot[y][x]=0.25*(dpot[y+1][x]+dpot[y-1][x]+dpot[y][(x+1+XMAX)%(XMAX)]+dpot[y][(x-1+XMAX)%(XMAX)]);
-
-		    }
 		}
 	      else
 		{
@@ -371,47 +359,7 @@ void Potentials::Iteration(void *wfgui)	//
 	      sum+=fabs(dpot[j][i]-newpot.dpot[j][i]);
 	    }
 	  }
-	  if(it%N==0 && gui->Getplotupdate()==1 && gui->Getstopped()==0)	// do plot update every N iterations
-	    {
-	      //gui->DrawHist();
-	      gui->Getdhist()->Reset();	//Reset histogram. dhist1 = histogram of drift potential
-	      //      gui->Getdhist()->TH2F::SetBins((XMAX),-(XMAX)*0.5,(XMAX)*0.5,(YMAX),-(YMAX)*0.5,(YMAX)*0.5); // set bins of histogram
-	      gui->Getdhist()->TH2F::SetBins((XMAX),0.,XMAX,YMAX,0,YMAX); // set bins of histogram
-	      gui->Getdhist()->GetXaxis()->SetTitle("x [um]");
-	      gui->Getdhist()->GetYaxis()->SetTitle("y [um]");
 
-	      gui->Getwhist()->Reset();	//whist1 = histogram of weighting potential					
-	      gui->Getwhist()->TH2F::SetBins(XMAX,0,XMAX,YMAX, 0,YMAX);
-	      
-	      for(int i=0;i<XMAX;i++) {		// fill histogram
-		for(int j=0;j<YMAX;j++) {
-		  gui->Getdhist()->SetBinContent(i+1,j+1,newpot.dpot[j][i]);
-		  gui->Getwhist()->SetBinContent(i+1,j+1,newpot.wpot[j][i]);
-		}
-	      }	
-
-	      cout << " Potentials 2DPlot " << gui->GetLess2DPlot() << endl;
-	      gui->DrawAllGraph(0);
-
-	      /*	      if (!gui->GetLess2DPlot()) 
-		{
-		  gui->Getcanvasp()->cd();
-		  gui->Getdhist()->SetStats(0);	// hide statistics box
-		  gui->Getdhist()->Draw("COLZ"); // draw histogram				
-		
-
-		  gui->Getcanvasw()->cd();
-		  gui->Getwhist()->SetStats(0);
-		  gui->Getwhist()->Draw("COLZ");
-		  
-		  DriftPal();
-		  gui->Getcanvasp()->Update();
-		  WeightPal();
-		  gui->Getcanvasw()->Update();
-		}
-*/
-
-	    }//End of if(it%N==0)
 	  
 	  if(sum/((double)(XMAX*YMAX))<err)	//check wether accuracy reached
 	    {
@@ -433,12 +381,13 @@ void Potentials::Iteration(void *wfgui)	//
       }
       it++;
 
-      ///} // end of if(gui-<Getstopped()==0)
     }//end of while loop
   
   //	for (int j = 0; j < YMAX; j++) delete [] tempfix[j] ;	    	
   //	delete [] tempfix;
+
 }
+
 //////////////////////////////////////////////////////////////////////
 Potentials::~Potentials() {	// destructor
   for (int j = 0; j < YMAX; j++) delete [] dpot[j] ;	    	
@@ -450,6 +399,7 @@ Potentials::~Potentials() {	// destructor
   for (int j = 0; j < YMAX; j++) delete [] fix[j] ;
   delete [] fix;
 }
+
 //////////////////////////////////////////////////////////////////////
 void Potentials::Restriktor()    //method to restrict potentials to a coarser grid, with XMAX/2+1
 {
@@ -596,9 +546,8 @@ void Potentials::Prolongation() // method to prolongate potentials to finer grid
   }
 }
 //////////////////////////////////////////////////////////////////////////
-void Potentials::Multigrid(void *wfgui)
+void Potentials::Multigrid()
 {
-  WFGUI* gui= (WFGUI*) wfgui;
   
   for(int i=0; i<multig; i++) { // starting with calculation on coarsest grid, we need to restrict potentials
     Restriktor();
@@ -612,21 +561,15 @@ void Potentials::Multigrid(void *wfgui)
   gridlabel2 = new char[50];
   sprintf(gridlabel2, "Calculating Potentials: grid number: %d/%d",1,multig+1);
   
-
-  Iteration(gui);
-  gui->GetCalculatingLabel2()->SetTitle(gridlabel2);
-  gui->GetCalculatingLabel()->SetTitle(gridlabel);
+  Iteration();
   
   for(int i=0; i<multig; i++) { 
     Prolongation();
     sprintf(gridlabel, "Calculating Potentials: grid number: %d/%d",i+2,multig+1);
     sprintf(gridlabel2, "Calculating Potentials: grid number: %d/%d",i+2,multig+1);	
-    gui->GetCalculatingLabel2()->SetTitle(gridlabel2);
-    gui->GetCalculatingLabel()->SetTitle(gridlabel);
-    Iteration(gui);
+    Iteration();
   }
-  gui->Getdhist()->GetXaxis()->SetLabelColor(1);	
-  gui->Getwhist()->GetYaxis()->SetLabelColor(1);
+
 }
 //////////////////////////////////////////////////////////////////////////
 unsigned char Potentials::GetDoping() {

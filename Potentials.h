@@ -18,7 +18,6 @@
 #define PTYPE 1
 #define GRIDDIST  0.000001	// grid distance (1um) in m
 
-class WFGUI;
 
 #ifndef Potentials_H
 #define Potentials_H
@@ -73,8 +72,8 @@ class Potentials {
 		void Restriktor();					// method to restrict potentials to a coarser grid, with XMAX/2+1
 		int** FixRestriktor();				// method to restrict fix matrix to coarser grid
 		void Prolongation();				// method to prolongate potentials to finer grid with XMAX*2-1
-		void Iteration(void*);	// method for iterative calculation 
-		void Multigrid(void*);	// method for multigrid calculation
+		void Iteration();	// method for iterative calculation 
+		void Multigrid();	// method for multigrid calculation
 		void DriftPal(); 							// Color palette for driftfield (linear)
 		void WeightPal(); 							// Color palette for weighting field (linear)
 		void SetDoping(unsigned char, unsigned char);	// method to set doping of strips and bulk
