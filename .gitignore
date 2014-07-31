@@ -1,3 +1,7 @@
 weightfield
 Dict.cxx
-Dict.h
+*Dict.h
+*Dict.C
+*.o
+wfnogui
+wdhistos.root
