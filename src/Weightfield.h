@@ -5,7 +5,7 @@
 *          CHANGE THOSE HEADER FILES AND REGENERATE THIS FILE.
 ********************************************************************/
 #ifdef __CINT__
-#error Weightfield.h/C is only for compilation. Abort cint.
+#error /Users/nicolo/work/GruppoV_UFSD/Weightfield_evolution/weightfield2_Xcode/Weightfield.h/C is only for compilation. Abort cint.
 #endif
 #include <stddef.h>
 #include <stdio.h>
