@@ -169,7 +169,7 @@ void CreateCharges(Potentials &pot, Carriers *carriers, int hit, void* wfgui)   
   WFGUI* gui= (WFGUI*) wfgui; // pointer to gui
   //  cout << "Detector Type = " << gui->CallGetDetType()<< endl;
   //  TFile Myf("dEdz_200_5mu.root");
-  TFile Myf("Geant_Vin.root");
+  TFile Myf("../data/Geant_Vin.root");
   int TotPairs = 0;
 
   int PairsPer5Micron[100];
