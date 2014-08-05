@@ -5,3 +5,4 @@ Dict.cxx
 *.o
 wfnogui
 wdhistos.root
+build/*

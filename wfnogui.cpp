@@ -123,37 +123,111 @@ int main( int argc, char *argv[] ) {
   
  //  /* CALCULATE CURRENTS -------------------------------------------------- */
   
- //  ParticleID pID = MIPunif;
- //  Int_t XEntryPoint = (int) (pitch +0.5*width) ;
- //  Int_t Angle = 0 ;
+  ParticleID pID = MIPunif;
+  Int_t XEntryPoint = (int) (pitch +0.5*width) ;
+  Int_t Angle = 0 ;
   
- //  Double_t B=0.0;
- //  Double_t Temp=0.0;
-
- //  SetAlphaRange(RangeEntry->GetNumber());
- //  SetPrecision(PrecisionEntry->GetNumber());
- //  SetYGain(Gainentry->GetNumber());
- //  SetGainRatio(GainRatioentry->GetNumber());
+  Double_t B=0.0;
+  Double_t Temp=0.0;
 
 
- //  if(bfieldon==true) 
- //    {
- //      B = BfieldEntry->GetNumber();
- //    }
 
- //  Temp = TempEntry->GetNumber();
- //  cout << "Temperature set to = "<< Temp << endl;		
+  //SetAlphaRange(RangeEntry->GetNumber());
+  //SetPrecision(PrecisionEntry->GetNumber());
+  //SetYGain(Gainentry->GetNumber());
+  //SetGainRatio(GainRatioentry->GetNumber());
 
- //  //mfg:Oversizing an array, I dont think this should be needed
- //  dimMaxCarriers= 2*dwpot.Getmipcharge()+2000000;
- //  carriers =new Carriers[dimMaxCarriers];
+  // Set range
+  double AlphaRange = 10;
+  // Between 1 and 10
+  int Precision = 1;
+  // Set yGain
+  double ygain = 1;
+  // Set Gain ratio
+  double gain = 0;
+  // BField ?
+  bool bfieldon = false;
+  if (bfieldon == true)
+  {
+    B = 0;
+  }
+  double temp = 300;
+  cout << "Temperature set to = "<< Temp << endl; 
+  cout << "Upper detector dimension = "<<dwpot.GetYMAX()<<endl;
+  int NBatch = 1.;
+
+  //mfg:Oversizing an array, I dont think this should be needed
+  dimMaxCarriers= 2*dwpot.Getmipcharge()+2000000;
+  carriers =new Carriers[dimMaxCarriers];
   
- //  /* 
- //    I believe "batch" simulates several events of the same kind, for instance,
- //    several shots of MIPs 
- //  */
- //  int NBatch = 1 , radiobuttonstatus=0;
+  /* 
+  I believe "batch" simulates several events of the same kind, for instance,
+  several shots of MIPs 
+  */
+  //int NBatch = 1 , radiobuttonstatus=0;
 
+  // Required flags and variables
+  bool ConstQFlag;
+  bool UniformQFlag;
+  bool UserUniformQFlag;
+  double carrierangle = 0;
+
+
+
+  for (int i=0;i<dimMaxCarriers;i++) carriers[i].Setinside(-1); //initialize carriers array
+  
+      // Hitting position of the carriers
+      Double_t carriersin = dwpot.GetXMAX()/2 ;
+      switch (0){
+      case MIPunif:
+        ConstQFlag = true;
+        UniformQFlag = true;
+        dwpot.Setmipcharge(dwpot.GetYMAX()*75/cos(TMath::Pi()/180*carrierangle));
+        CreateCharges(dwpot,carriers,carriersin,this);
+        break;
+        
+      case MIPnonunif:
+        ConstQFlag = true;
+        UniformQFlag = false;
+        CreateCharges(dwpot,carriers,carriersin,this);
+        break;
+        
+      case MIPlandau:
+        ConstQFlag = false;
+        UniformQFlag = false;
+        CreateCharges(dwpot,carriers,carriersin,this);
+        break;
+        
+      case ALPHA_TOP:
+        dwpot.Setmipcharge(ALPHACHARGE);
+        CreateChargesAlphaTop(dwpot,carriers,carriersin,this);
+
+        break;
+        
+      case ALPHA_BOTTOM:
+        dwpot.Setmipcharge(ALPHACHARGE);
+        CreateChargesAlphaBottom(dwpot,carriers,carriersin,this);
+        break;
+        
+      case USR_CHARGE:
+        ConstQFlag = true;
+        UniformQFlag = true;
+        UserUniformQFlag = true;
+        dwpot.Setmipcharge(Chargeentry->GetNumber()*dwpot.GetYMAX()/cos(TMath::Pi()/180*GetAngle()));
+        CreateCharges(dwpot,carriers,carriersin,this);
+
+        break;
+        
+      default: break;
+      }
+
+  if (e%100 == 0){
+    cout<<"Event Number: "<<e <<endl;
+  }
+  
+  CalculateCurrents(dwpot,df,wf,carriers,this,e);
+
+      
  //  for (int e=1; e<= NBatch; e++)
  //    {	
  //      cout << "Processing event " << e << endl;
