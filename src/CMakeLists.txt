@@ -35,7 +35,7 @@ set_target_properties(weightfield3-bin PROPERTIES OUTPUT_NAME weightfield3)
 add_library(PotenDict SHARED ${PotenDict_DICTIONARY})
 target_link_libraries(PotenDict ${LIBRARIES})
 # Field Class
-add_library(FieldDict SHARED ${PotenDict_DICTIONARY})
+add_library(FieldDict SHARED ${FieldDict_DICTIONARY})
 target_link_libraries(FieldDict ${LIBRARIES})
 
 
