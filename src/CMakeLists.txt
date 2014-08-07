@@ -13,12 +13,12 @@ ROOT_GENERATE_DICTIONARY("${Dict_HEADERS}" "${Dict_LINKDEF}" "${Dict_DICTIONARY}
 # Add the dictionary to the list of source files
 SET(SRC ${SRC} ${Dict_DICTIONARY}) 
 
-# Generate root dictionary for PotenClass
+# Generate root dictionary for Potential Class
 SET(PotenDict_HEADERS ${CMAKE_CURRENT_LIST_DIR}/Potentials.h)
 SET(PotenDict_DICTIONARY ${CMAKE_CURRENT_BINARY_DIR}/PotenDict.cxx) 
 ROOT_GENERATE_DICTIONARY("${PotenDict_HEADERS}" "" "${PotenDict_DICTIONARY}" "${INCLUDE_DIRECTORIES}")
 
-# Generate root dictionary for PotenClass
+# Generate root dictionary for Field Class
 SET(FieldDict_HEADERS ${CMAKE_CURRENT_LIST_DIR}/Field.h)
 SET(FieldDict_DICTIONARY ${CMAKE_CURRENT_BINARY_DIR}/FieldDict.cxx) 
 ROOT_GENERATE_DICTIONARY("${FieldDict_HEADERS}" "" "${FieldDict_DICTIONARY}" "${INCLUDE_DIRECTORIES}")
