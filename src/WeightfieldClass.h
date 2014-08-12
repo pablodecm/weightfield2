@@ -31,7 +31,7 @@ private:
 public:
   WeightfieldClass(); // Default constructor
   ~WeightfieldClass();
-  WeightfieldClass(int _XMAX, int _YMAX, double _pitch, double _width, double _biasVolt, double _depVolt );
+  WeightfieldClass(int _XMAX, int _YMAX, double _pitch, double _width, int _stripDop, int _bulkDop, double _biasVolt, double _depVolt );
   // important methods
   void calculatePotentials();
   void calculateFields();

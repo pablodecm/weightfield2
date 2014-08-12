@@ -22,6 +22,31 @@ WeightfieldClass::WeightfieldClass()
   }
 }
 
+WeightfieldClass::WeightfieldClass(int _XMAX, int _YMAX, double _pitch, double _width, int _stripDop, int _bulkDop, double _biasVolt, double _depVolt )
+{
+  // Init class members
+  XMAX = _XMAX;
+  YMAX = _YMAX;
+  pitch = _pitch;
+  width = _width;
+  stripDop = _stripDop;
+  bulkDop = _bulkDop;
+  biasVolt = _biasVolt;
+  depVolt = _depVolt;
+  dwpot = new Potentials(YMAX,XMAX,pitch,width) ;
+  dField = new Field*[(dwpot->GetYMAX())];
+  for (int i = 0; i < (dwpot->GetYMAX()); i++) {
+    dField[i] = new Field[(dwpot->GetXMAX())];
+  }
+
+  wField = new Field*[(dwpot->GetYMAX())];
+  for (int i = 0; i < (dwpot->GetYMAX()); i++) {
+    wField[i] = new Field[(dwpot->GetXMAX())];
+  }
+}
+
+
+
 void WeightfieldClass::calculatePotentials()
 {
 

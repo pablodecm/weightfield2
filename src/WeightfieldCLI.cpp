@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <getopt.h>
 // ROOT includes
 #include "TH1.h"
 #include "TFile.h"
@@ -17,26 +17,86 @@ void saveHistsToFile(TString fname, WeightfieldClass* weightF );
 
 int main(int argc, char **argv)
 {
-    int opt,a,b,c;
-    while ((opt = getopt(argc,argv,"abc:d")) != EOF)
-        switch(opt)
-        {
-            case 'a': a = 1; cout <<" a is enabled"<<a <<endl; break;
-            case 'b': b = 1; cout <<" b is enabled"<<b <<endl; break;
-            case 'c': c = 1; cout << "value of c is"<< optarg <<endl ; break;
-            case '?': fprintf(stderr, "usuage is \n -a : for enabling a \n -b : for enabling b \n -c: <value> ");
-            default: cout<<endl; abort();
-        }
 
+    // Default values
+    int XMAX = 3;
+    int YMAX = 300;
+    double pitch = 80.;
+    double width = 30.;
+    int stripDop = 1;
+    int bulkDop = 0;
+    double biasVolt = 300.;
+    double depVolt = 85.;
+    TString fname = "wdhistos.root";
 
-    WeightfieldClass* weightF = new WeightfieldClass();
+    int c;
+
+    while (1)
+    {
+      static struct option long_options[] =
+      {
+        {"XMAX", required_argument, 0, 'x'},
+        {"YMAX", required_argument, 0, 'y'},
+        {"pitch", required_argument, 0, 'p'},
+        {"width", required_argument, 0, 'w'},
+        {"stripDop", required_argument, 0, 's'},
+        {"bulkDop", required_argument, 0, 'b'},
+        {"biasVolt", required_argument, 0, 'v'},
+        {"depVolt", required_argument, 0, 'd'},
+        {"fname", required_argument, 0, 'o'},
+      };
+      int option_index = 0;
+
+      c = getopt_long (argc, argv, "x:y:p:w:s:b:v:d:o:",long_options, &option_index);
+
+      /* Detect the end of the options. */
+      if (c == -1)
+        break;
+
+      switch (c)
+      {
+        case 'x':
+          XMAX = atoi(optarg);
+          break;
+        case 'y':
+          YMAX = atoi(optarg);
+          break;
+        case 'p':
+          pitch = atof(optarg);
+          break;
+        case 'w':
+          width = atof(optarg);
+          break;
+        case 's':
+          stripDop = atoi(optarg);
+          break;
+        case 'b':
+          bulkDop = atoi(optarg);
+          break;
+        case 'v':
+          biasVolt = atof(optarg);
+          break;
+        case 'd':
+          depVolt = atof(optarg);
+          break;
+        case 'o':
+          fname = TString(optarg);
+          break;
+        case '?':
+          /* getopt_long already printed an error message. */
+          break;
+        default:
+           abort ();
+      }
+    }
+
+    // Set class and calculate fields and potentials
+    WeightfieldClass* weightF = new WeightfieldClass(XMAX, YMAX, pitch, width, stripDop, bulkDop, biasVolt, depVolt);
     weightF->calculatePotentials();
-
     weightF->calculateFields();
 
-
-    saveHistsToFile("wdhistos.root", weightF);
-
+    // Save histograms to file
+    saveHistsToFile(fname, weightF);
 
     return 0;
 }
