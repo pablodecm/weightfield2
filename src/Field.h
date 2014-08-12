@@ -19,12 +19,12 @@ class Field {
 		void Setabs(double);
 		void SetField(double,double);
 
-		ClassDef(Field,0); 
+		ClassDef(Field,0);
 };
 
 
 #endif
 
-void CalculateFields(Potentials&,Field**,Field**);
-void CalculateAbsFields(Potentials&,Field**,Field**);
-Field** RotateField(Potentials &,Field**,double);
+void CalculateFields(Potentials*,Field**,Field**);
+void CalculateAbsFields(Potentials*,Field**,Field**);
+Field** RotateField(Potentials* ,Field**,double);

@@ -14,7 +14,7 @@
 #include "TGFrame.h"
 #include "TGraph.h"
 
-#define NTYPE 0		
+#define NTYPE 0
 #define PTYPE 1
 #define GRIDDIST  0.000001	// grid distance (1um) in m
 
@@ -33,8 +33,8 @@ class Potentials {
 		int count;			// number of strips
 		double vbias;			// bias voltage
 		double vdepl;			// depletion voltage
-		double TrueXMAX;	
-		double TrueYMAX;	
+		double TrueXMAX;
+		double TrueYMAX;
 
 		double poissonf;		// right side of Poisson equation
 		int **fix;			// ag for fixed potentials [electrodes]: 1=normal electrode, 2=readout electrode, 0=everywhere else
@@ -49,7 +49,7 @@ class Potentials {
 		bool alpha_above;	//if alpha particle comes from above or not
 
 	public:
-		Potentials();						
+		Potentials();
 		Potentials(int, int,double,double);	// constructor (YMAX,XMAX,pitch,width)
 		Potentials(int,int);				// constructor (YMAX,XMAX)
 		virtual ~Potentials();				// destructor
@@ -57,33 +57,33 @@ class Potentials {
 		void SetwPotential(int, int, double);	// set weighting potential(i,j)
 		void SetdPotential(int, int, double);	// set drift potential(i,j)
 		void SetPitchWidthXY(int, int,double,double); //Set YMAX, XMAX, pitch width
-		double Getdpot(int,int);				// get drift potential(i,j) 
+		double Getdpot(int,int);				// get drift potential(i,j)
 		double Getwpot(int,int);				// get weighting potential(i,j)
 		int Getfix(int,int);				// get fix matrix (i,j)
-		int GetXMAX();						
-		int GetYMAX();						
-		//		void SetXMAX(int);						
-		//  void SetYMAX(int);						
-		int Getref();		
+		int GetXMAX();
+		int GetYMAX();
+		//		void SetXMAX(int);
+		//  void SetYMAX(int);
+		int Getref();
 		int Getmipcharge();
 		void Setmipcharge(int);
-		double Getvbias();					
-		double Getpitch();					
+		double Getvbias();
+		double Getpitch();
 		void SetBoundaryConditions();			// set strips/backplane to bias voltage/zero, depending on doping
 		void Restriktor();					// method to restrict potentials to a coarser grid, with XMAX/2+1
 		int** FixRestriktor();				// method to restrict fix matrix to coarser grid
 		void Prolongation();				// method to prolongate potentials to finer grid with XMAX*2-1
-		void Iteration(void*);	// method for iterative calculation 
-		void Multigrid(void*);	// method for multigrid calculation
+		void Iteration();	// method for iterative calculation
+		void Multigrid();	// method for multigrid calculation
 		void DriftPal(); 							// Color palette for driftfield (linear)
 		void WeightPal(); 							// Color palette for weighting field (linear)
 		void SetDoping(unsigned char, unsigned char);	// method to set doping of strips and bulk
 		unsigned char GetDoping();
 		void SetAbove(bool);	//method to set alpha particles coming from above
 		bool GetAbove();
-		
 
-		ClassDef(Potentials,0); 
+
+		ClassDef(Potentials,0);
 };
 
 #endif
