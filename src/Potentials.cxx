@@ -1,5 +1,5 @@
-//#include "Potentials.h"
-#include "WFGUI.h"
+#include "Potentials.h"
+
 //////////////////////////////////////////////////////////////////////
 Potentials::Potentials()  //constructor
 {
